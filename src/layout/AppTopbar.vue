@@ -1,41 +1,14 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
-import { useAuthStore } from '../stores/auth';
 
 const { layoutConfig } = useLayout();
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
-const dataUser = ref({ name: 'Bienvenido' });
-const authStore = useAuthStore();
-const getEssentialData = () => {
-    try {
-        if (authStore.sessionUser) {
-            const userData = authStore.getEsential;
-            dataUser.value = userData;
-        }
-    } catch (error) {
-        console.log(error);
-    }
-};
+
 onMounted(async () => {
-    await authStore.currentUser();
-    getEssentialData();
     bindOutsideClickListener();
 });
-
-// Observa cambios en la sesión del usuario
-watch(
-    () => authStore.sessionUser,
-    async (newSession) => {
-        if (newSession) {
-            // La sesión del usuario ha cambiado, realiza acciones aquí
-            await authStore.currentUser();
-            getEssentialData();
-            //console.log('La sesión del usuario ha cambiado topbar:', newSession);
-        }
-    }
-);
 
 onBeforeUnmount(() => {
     unbindOutsideClickListener();
